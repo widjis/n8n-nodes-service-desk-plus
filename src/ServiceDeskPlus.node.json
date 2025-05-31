@@ -1,0 +1,106 @@
+[
+    {
+      "name":        "createServiceDeskTicket",
+      "displayName": "Create Ticket",
+      "description": "Create a new ticket in ServiceDesk Plus",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "description": "Ticket subject"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the issue"
+          },
+          "email_id": {
+            "type": "string",
+            "description": "Requester email address"
+          },
+          "service_category": {
+            "type": "string",
+            "description": "Service category code",
+            "enum": [
+              "01. PC/Laptop",
+              "02. Office Application",
+              "03. Printer&Scanner",
+              "04. IT Peripheral",
+              "05. LED Monitor",
+              "06. Television",
+              "07. Merdeka System Apps",
+              "08. File Server",
+              "09. Network",
+              "10. Radio HT",
+              "11. Deskphone",
+              "12. Access Card",
+              "13. CCTV",
+              "14. IT Service Request Form",
+              "15. Other",
+              "16. IT System and Mail",
+              "17. IT Project Related to System",
+              "18. IT Project Related to Network",
+              "19. Preventive Maintenance Support",
+              "20. Preventive Maintenance Network",
+              "21. Document Control"
+            ]
+          }
+        },
+        "required": ["subject","description","email_id","service_category"]
+      }
+    },
+    {
+      "name":        "updateServiceDeskTicket",
+      "displayName": "Update Ticket",
+      "description": "Update an existing ticket in ServiceDesk Plus",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "ticketId": {
+            "type": "string",
+            "description": "ID of the ticket to update"
+          },
+          "updateFields": {
+            "type": "object",
+            "properties": {
+              "service_category": {
+                "type": "string",
+                "enum": [
+                  "01. PC/Laptop",
+                  "02. Office Application",
+                  "03. Printer&Scanner",
+                  "04. IT Peripheral",
+                  "05. LED Monitor",
+                  "06. Television",
+                  "07. Merdeka System Apps",
+                  "08. File Server",
+                  "09. Network",
+                  "10. Radio HT",
+                  "11. Deskphone",
+                  "12. Access Card",
+                  "13. CCTV",
+                  "14. IT Service Request Form",
+                  "15. Other",
+                  "16. IT System and Mail",
+                  "17. IT Project Related to System",
+                  "18. IT Project Related to Network",
+                  "19. Preventive Maintenance Support",
+                  "20. Preventive Maintenance Network",
+                  "21. Document Control"
+                ]
+              },
+              "status":           { "type": "string" },
+              "technicianName":   { "type": "string" },
+              "resolution":       { "type": "string" },
+              "priority": {
+                "type": "string",
+                "enum": ["Low","Medium","High"]
+              }
+            }
+          }
+        },
+        "required": ["ticketId","updateFields"]
+      }
+    }
+  ]
+  

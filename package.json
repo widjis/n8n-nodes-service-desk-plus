@@ -1,0 +1,25 @@
+{
+    "name": "n8n-nodes-service-desk-plus",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@azure/storage-blob": "^12.27.0",
+        "axios": "^1.4.0",
+        "n8n-core": "^1.0.0",
+        "n8n-workflow": "^1.0.0"
+    },
+    "devDependencies": {
+        "@types/form-data": "^2.2.1",
+        "@types/nock": "^10.0.3",
+        "@types/node": "^22.15.3",
+        "@types/p-cancelable": "^1.0.0",
+        "@types/request-promise-native": "^1.0.21",
+        "@types/ssh2": "^1.15.5",
+        "copyfiles": "^2.4.1",
+        "typescript": "^5.0.0"
+    }
+}

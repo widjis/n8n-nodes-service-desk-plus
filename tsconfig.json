@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+      "module": "commonjs",
+      "target": "es2019",
+      "outDir": "dist",
+      "declaration": true,
+      "rootDir": "src",
+      "strict": true,
+  
+      // ← ADD THESE
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "resolveJsonModule": true,
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/typings/**/*.d.ts",
+        "src/**/*.json"
+    ]
+  }
+  
