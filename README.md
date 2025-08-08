@@ -15,6 +15,13 @@ A comprehensive n8n node for ManageEngine ServiceDesk Plus integration with adva
 - ✅ **Add Reply** - Reply to ticket conversations with advanced targeting
 - ✅ **Get Conversations** - Retrieve complete conversation history
 
+### 📎 Attachment Management (NEW!)
+- ✅ **Upload Attachment** - Upload files to tickets with descriptions
+- ✅ **Download Attachment** - Download attachments with configurable paths
+- ✅ **List Attachments** - Retrieve all attachments for a ticket
+- ✅ **Delete Attachment** - Remove attachments from tickets
+- 🔒 **Secure File Handling** - Proper error handling and validation
+
 ### Advanced Reply Features
 - 🎯 **Reply to First Message** - Target initial web-created messages
 - 🎯 **Reply to Latest Message** - Respond to most recent conversation
@@ -22,10 +29,11 @@ A comprehensive n8n node for ManageEngine ServiceDesk Plus integration with adva
 - 🔒 **Public/Private Replies** - Control reply visibility
 
 ### AI Integration
-- 🤖 **6 AI-Accessible Tools** for intelligent automation
+- 🤖 **10 AI-Accessible Tools** for intelligent automation
 - 🤖 **Smart Ticket Triage** - AI can categorize and assign tickets
 - 🤖 **Automated Status Updates** - AI-driven progress monitoring
 - 🤖 **Intelligent Reply Generation** - Context-aware responses
+- 🤖 **Attachment Intelligence** - AI-powered file management
 
 ## 📦 Installation
 

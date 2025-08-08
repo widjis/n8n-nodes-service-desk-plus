@@ -1,16 +1,57 @@
 {
     "name": "n8n-nodes-service-desk-plus",
     "version": "1.0.0",
+    "description": "n8n node for ServiceDesk Plus integration with enhanced attachment management, resolution tracking, and knowledge base features",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "license": "MIT",
+    "homepage": "https://github.com/yourusername/n8n-nodes-service-desk-plus",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/yourusername/n8n-nodes-service-desk-plus.git"
+    },
+    "keywords": [
+        "n8n",
+        "n8n-community-node-package",
+        "servicedesk",
+        "servicedesk-plus",
+        "helpdesk",
+        "ticketing",
+        "itsm",
+        "automation"
+    ],
+    "author": {
+        "name": "Your Name",
+        "email": "your.email@example.com"
+    },
+    "files": [
+        "dist/**/*",
+        "README.md",
+        "serviceDeskPlus.svg"
+    ],
+    "n8n": {
+        "n8nNodesApiVersion": 1,
+        "credentials": [
+            "dist/credentials/ServiceDeskPlusApi.credentials.js"
+        ],
+        "nodes": [
+            "dist/ServiceDeskPlus.node.js"
+        ]
+    },
     "scripts": {
-        "build": "tsc"
+        "build": "tsc && npm run copy-assets",
+        "copy-assets": "copyfiles -u 1 src/**/*.svg src/**/*.json dist/",
+        "dev": "tsc --watch",
+        "lint": "tsc --noEmit",
+        "prepublishOnly": "npm run build",
+        "test": "echo \"No tests specified\" && exit 0"
     },
     "dependencies": {
         "@azure/storage-blob": "^12.27.0",
-        "axios": "^1.4.0",
-        "n8n-core": "^1.0.0",
-        "n8n-workflow": "^1.0.0"
+        "axios": "^1.4.0"
+    },
+    "peerDependencies": {
+        "n8n-workflow": "*"
     },
     "devDependencies": {
         "@types/form-data": "^2.2.1",
@@ -20,6 +61,11 @@
         "@types/request-promise-native": "^1.0.21",
         "@types/ssh2": "^1.15.5",
         "copyfiles": "^2.4.1",
+        "n8n-workflow": "^1.0.0",
         "typescript": "^5.9.2"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=8.0.0"
     }
 }
