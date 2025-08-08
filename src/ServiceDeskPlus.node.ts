@@ -44,6 +44,10 @@ import {
             { name: 'Get Ticket', value: 'getTicket' },
             { name: 'List Tickets', value: 'listTickets' },
             { name: 'Get Conversations', value: 'getConversations' },
+            { name: 'Upload Attachment', value: 'uploadAttachment' },
+            { name: 'Download Attachment', value: 'downloadAttachment' },
+            { name: 'List Attachments', value: 'listAttachments' },
+            { name: 'Delete Attachment', value: 'deleteAttachment' },
           ],
           default: 'create',
           description: 'Operation to perform',
@@ -217,6 +221,50 @@ import {
             },
           ],
         },
+        // Attachment Management Properties
+        {
+          displayName: 'Ticket ID',
+          name: 'attachmentTicketId',
+          type: 'string',
+          default: '',
+          required: true,
+          displayOptions: { show: { operation: ['uploadAttachment', 'downloadAttachment', 'listAttachments'] } },
+          description: 'ID of the ticket to manage attachments for',
+        },
+        {
+          displayName: 'File Path',
+          name: 'filePath',
+          type: 'string',
+          default: '',
+          required: true,
+          displayOptions: { show: { operation: ['uploadAttachment'] } },
+          description: 'Path to the file to upload',
+        },
+        {
+          displayName: 'File Description',
+          name: 'fileDescription',
+          type: 'string',
+          default: '',
+          displayOptions: { show: { operation: ['uploadAttachment'] } },
+          description: 'Optional description for the uploaded file',
+        },
+        {
+          displayName: 'Attachment ID',
+          name: 'attachmentId',
+          type: 'string',
+          default: '',
+          required: true,
+          displayOptions: { show: { operation: ['downloadAttachment', 'deleteAttachment'] } },
+          description: 'ID of the attachment to download or delete',
+        },
+        {
+          displayName: 'Download Path',
+          name: 'downloadPath',
+          type: 'string',
+          default: '',
+          displayOptions: { show: { operation: ['downloadAttachment'] } },
+          description: 'Path where to save the downloaded file (optional)',
+        },
       ],
       usableAsTool: true,
       tools: [
@@ -383,6 +431,59 @@ import {
               ticketId: { type: 'string', description: 'ID of the ticket' }
             },
             required: ['ticketId']
+          }
+        },
+        {
+          name: 'uploadAttachment',
+          displayName: 'Upload Attachment',
+          description: 'Upload a file attachment to a ticket',
+          parameters: {
+            type: 'object',
+            properties: {
+              ticketId: { type: 'string', description: 'ID of the ticket to attach file to' },
+              filePath: { type: 'string', description: 'Path to the file to upload' },
+              fileDescription: { type: 'string', description: 'Optional description for the file' }
+            },
+            required: ['ticketId', 'filePath']
+          }
+        },
+        {
+          name: 'downloadAttachment',
+          displayName: 'Download Attachment',
+          description: 'Download an attachment from a ticket',
+          parameters: {
+            type: 'object',
+            properties: {
+              ticketId: { type: 'string', description: 'ID of the ticket' },
+              attachmentId: { type: 'string', description: 'ID of the attachment to download' },
+              downloadPath: { type: 'string', description: 'Optional path to save the file' }
+            },
+            required: ['ticketId', 'attachmentId']
+          }
+        },
+        {
+          name: 'listAttachments',
+          displayName: 'List Attachments',
+          description: 'List all attachments for a ticket',
+          parameters: {
+            type: 'object',
+            properties: {
+              ticketId: { type: 'string', description: 'ID of the ticket' }
+            },
+            required: ['ticketId']
+          }
+        },
+        {
+          name: 'deleteAttachment',
+          displayName: 'Delete Attachment',
+          description: 'Delete an attachment from a ticket',
+          parameters: {
+            type: 'object',
+            properties: {
+              ticketId: { type: 'string', description: 'ID of the ticket' },
+              attachmentId: { type: 'string', description: 'ID of the attachment to delete' }
+            },
+            required: ['ticketId', 'attachmentId']
           }
         },
       ],
@@ -658,6 +759,171 @@ import {
                 success: true,
                 ticketId,
                 conversations: response.data.conversations || []
+              }
+            });
+          } catch (error: any) {
+            returnData.push({
+              json: {
+                success: false,
+                error: error.message || error.toString(),
+              },
+            });
+          }
+        } else if (operation === 'uploadAttachment') {
+          // Upload attachment to ticket
+          const ticketId = this.getNodeParameter('attachmentTicketId', i) as string;
+          const filePath = this.getNodeParameter('filePath', i) as string;
+          const fileDescription = this.getNodeParameter('fileDescription', i) as string;
+          
+          try {
+            const FormData = require('form-data');
+            const fs = require('fs');
+            const path = require('path');
+            
+            const form = new FormData();
+            form.append('file', fs.createReadStream(filePath));
+            if (fileDescription) {
+              form.append('description', fileDescription);
+            }
+            
+            const uploadHeaders = {
+              ...headers,
+              ...form.getHeaders(),
+            };
+            delete uploadHeaders['Content-Type'];
+            
+            const response = await axios.post(
+              `${baseUrl}/requests/${ticketId}/attachments`,
+              form,
+              { headers: uploadHeaders, httpsAgent: agent }
+            );
+            
+            returnData.push({
+              json: {
+                success: true,
+                ticketId,
+                attachmentId: response.data.attachment?.id,
+                fileName: path.basename(filePath),
+                message: 'File uploaded successfully'
+              }
+            });
+          } catch (error: any) {
+            returnData.push({
+              json: {
+                success: false,
+                error: error.message || error.toString(),
+              },
+            });
+          }
+        } else if (operation === 'downloadAttachment') {
+          // Download attachment from ticket
+          const ticketId = this.getNodeParameter('attachmentTicketId', i) as string;
+          const attachmentId = this.getNodeParameter('attachmentId', i) as string;
+          const downloadPath = this.getNodeParameter('downloadPath', i) as string;
+          
+          try {
+            const response = await axios.get(
+              `${baseUrl}/requests/${ticketId}/attachments/${attachmentId}`,
+              { 
+                headers, 
+                httpsAgent: agent,
+                responseType: 'stream'
+              }
+            );
+            
+            if (downloadPath) {
+              const fs = require('fs');
+              const writer = fs.createWriteStream(downloadPath);
+              response.data.pipe(writer);
+              
+              await new Promise((resolve, reject) => {
+                writer.on('finish', resolve);
+                writer.on('error', reject);
+              });
+              
+              returnData.push({
+                json: {
+                  success: true,
+                  ticketId,
+                  attachmentId,
+                  downloadPath,
+                  message: 'File downloaded successfully'
+                }
+              });
+            } else {
+              // Return file data as base64
+              const chunks: any[] = [];
+              response.data.on('data', (chunk: any) => chunks.push(chunk));
+              
+              await new Promise((resolve, reject) => {
+                response.data.on('end', resolve);
+                response.data.on('error', reject);
+              });
+              
+              const buffer = Buffer.concat(chunks);
+              const base64Data = buffer.toString('base64');
+              
+              returnData.push({
+                json: {
+                  success: true,
+                  ticketId,
+                  attachmentId,
+                  fileData: base64Data,
+                  message: 'File data retrieved successfully'
+                }
+              });
+            }
+          } catch (error: any) {
+            returnData.push({
+              json: {
+                success: false,
+                error: error.message || error.toString(),
+              },
+            });
+          }
+        } else if (operation === 'listAttachments') {
+          // List attachments for ticket
+          const ticketId = this.getNodeParameter('attachmentTicketId', i) as string;
+          
+          try {
+            const response = await axios.get(
+              `${baseUrl}/requests/${ticketId}/attachments`,
+              { headers, httpsAgent: agent }
+            );
+            
+            returnData.push({
+              json: {
+                success: true,
+                ticketId,
+                attachments: response.data.attachments || [],
+                count: response.data.attachments?.length || 0
+              }
+            });
+          } catch (error: any) {
+            returnData.push({
+              json: {
+                success: false,
+                error: error.message || error.toString(),
+              },
+            });
+          }
+        } else if (operation === 'deleteAttachment') {
+          // Delete attachment from ticket
+          const ticketId = this.getNodeParameter('attachmentTicketId', i) as string;
+          const attachmentId = this.getNodeParameter('attachmentId', i) as string;
+          
+          try {
+            await axios.delete(
+              `${baseUrl}/requests/${ticketId}/attachments/${attachmentId}`,
+              { headers, httpsAgent: agent }
+            );
+            
+            returnData.push({
+              json: {
+                success: true,
+                ticketId,
+                attachmentId,
+                message: 'Attachment deleted successfully'
               }
             });
           } catch (error: any) {
