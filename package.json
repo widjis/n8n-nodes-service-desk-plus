@@ -20,6 +20,6 @@
         "@types/request-promise-native": "^1.0.21",
         "@types/ssh2": "^1.15.5",
         "copyfiles": "^2.4.1",
-        "typescript": "^5.0.0"
+        "typescript": "^5.9.2"
     }
 }
